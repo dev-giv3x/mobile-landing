@@ -1,35 +1,46 @@
 @import './base.css';
+@font-face {
+    font-family: 'Inter';
+    src: url('./fonts/Inter-VariableFont_opsz,wght.ttf') format('truetype');
+    font-weight: 100 900;
+    font-display: swap;
+}
 
 #app {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  font-weight: normal;
+    background:
+            radial-gradient(149.02% 100.37% at 10% 20%, rgba(219,230,245,0.6) 0%, rgba(219,230,245,0) 50%),
+            radial-gradient(149.02% 100.37% at 90% 80%, rgba(219,230,245,0.6) 0%, rgba(219,230,245,0) 50%),
+            #ffffff;
+    font-family: Inter;
+}
+.wrapper {
+    max-width: 1120px;
+    margin: 0 auto;
 }
 
-a,
-.green {
-  text-decoration: none;
-  color: hsla(160, 100%, 37%, 1);
-  transition: 0.4s;
-  padding: 3px;
-}
+/*a,*/
+/*.green {*/
+/*  text-decoration: none;*/
+/*  color: hsla(160, 100%, 37%, 1);*/
+/*  transition: 0.4s;*/
+/*  padding: 3px;*/
+/*}*/
 
-@media (hover: hover) {
-  a:hover {
-    background-color: hsla(160, 100%, 37%, 0.2);
-  }
-}
+/*@media (hover: hover) {*/
+/*  a:hover {*/
+/*    background-color: hsla(160, 100%, 37%, 0.2);*/
+/*  }*/
+/*}*/
 
-@media (min-width: 1024px) {
-  body {
-    display: flex;
-    place-items: center;
-  }
+/*@media (min-width: 1024px) {*/
+/*  body {*/
+/*    display: flex;*/
+/*    place-items: center;*/
+/*  }*/
 
-  #app {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    padding: 0 2rem;
-  }
-}
+/*  #app {*/
+/*    display: grid;*/
+/*    grid-template-columns: 1fr 1fr;*/
+/*    padding: 0 2rem;*/
+/*  }*/
+/*}*/
