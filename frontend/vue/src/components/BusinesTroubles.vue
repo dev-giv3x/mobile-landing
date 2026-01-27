@@ -7,37 +7,46 @@ export default defineComponent({
 </script>
 
 <template>
-  <section class="mb-12">
-    <div class="flex mt-12">
-      <div class="w-[364px] h-px mr-[46.5px] bg-[linear-gradient(90deg,#EBF1F9_0%,#EDEDED_100%)] mt-[18px]"></div>
-      <h2 class="text-3xl text-[#1A2B4B]">Проблемы бизнеса?</h2>
-      <div class="w-[364px] h-px ml-[46.5px] bg-[linear-gradient(-90deg,#FFFFFF_0%,#EDEDED_100%)] mt-[18px]"></div>
+  <section class="mb-12 px-4">
+    <div class="flex items-center mt-12 gap-4">
+      <div class="hidden md:block flex-1 h-px bg-gradient-to-r from-[#EBF1F9] to-[#EDEDED]"></div>
+
+      <h2 class="text-xl md:text-3xl max-[376px]:text-[18px] text-[#1A2B4B] text-center w-full md:w-auto whitespace-nowrap">
+        Проблемы бизнеса?
+      </h2>
+
+      <div class="hidden md:block flex-1 h-px bg-gradient-to-l from-[#FFFFFF] to-[#EDEDED]"></div>
     </div>
-    <div class="flex mt-10 gap-6">
-        <div class=" flex bg-[#FFFFFF] w-[350px] h-[112px] rounded-[12px]  shadow-[0_4px_6px_-1px_rgba(0,0,0,0.1),0_2px_4px_-2px_rgba(0,0,0,0.1)]">
-          <div class="py-8 pl-6">
-            <img src="@/assets/image/busines-troubles-first.png" alt="image">
-          </div>
-              <div class="py-[30px] w-[183px] h-[45.75px] pl-4 ">
-            <p class="text-lg text-[#1A2B4B] leading-6 font-normal ">Отсутствие единого инфополя</p>
-            </div>
+
+    <div class="flex flex-wrap justify-center mt-10 gap-6">
+
+      <div class="flex items-center bg-white h-[112px] max-[376px]:max-w-[300px] max-[376px]:h-[95px] rounded-xl shadow-md p-6 flex-1  min-w-[300px] max-w-[400px]">
+        <div class="flex-shrink-0">
+          <img src="@/assets/image/busines-troubles-first.png" class=" object-contain" alt="image">
         </div>
-      <div class=" flex bg-[#FFFFFF] w-[350px] h-[112px] rounded-[12px]  shadow-[0_4px_6px_-1px_rgba(0,0,0,0.1),0_2px_4px_-2px_rgba(0,0,0,0.1)]">
-        <div class="py-6 pl-6">
-          <img src="@/assets/image/busines-troubles-second.png" alt="image">
-        </div>
-        <div class="py-[44.5px] w-[163px] h-[45.75px] pl-4 ">
-          <p class="text-lg text-[#1A2B4B] font-normal ">Потеря данных</p>
+        <div class="ml-4">
+          <p class="text-lg text-[#1A2B4B] ">Отсутствие единого инфополя</p>
         </div>
       </div>
-      <div class=" flex bg-[#FFFFFF] w-[350px] h-[112px] rounded-[12px]  shadow-[0_4px_6px_-1px_rgba(0,0,0,0.1),0_2px_4px_-2px_rgba(0,0,0,0.1)]">
-        <div class="py-4 pl-6">
-          <img src="@/assets/image/busines-troubles-third.png" alt="image">
+
+      <div class="flex items-center bg-white h-[112px] max-[376px]:max-w-[300px] max-[376px]:h-[95px] rounded-xl shadow-md p-6 flex-1 min-w-[300px] max-w-[400px]">
+        <div class="flex-shrink-0">
+          <img src="@/assets/image/busines-troubles-second.png" class=" object-contain" alt="image">
         </div>
-        <div class="py-[30px] w-[163px] h-[45.75px] pl-4">
+        <div class="ml-4">
+          <p class="text-lg text-[#1A2B4B] leading-6 font-normal">Потеря данных</p>
+        </div>
+      </div>
+
+      <div class="flex items-center bg-white h-[112px] max-[376px]:max-w-[300px] max-[376px]:h-[95px] rounded-xl shadow-md p-6 flex-1 min-w-[300px] max-w-[400px]">
+        <div class="flex-shrink-0">
+          <img src="@/assets/image/busines-troubles-third.png" class=" object-contain" alt="image">
+        </div>
+        <div class="ml-4">
           <p class="text-lg text-[#1A2B4B] leading-6 font-normal">Сложная коммуникация</p>
         </div>
       </div>
+
     </div>
   </section>
 </template>

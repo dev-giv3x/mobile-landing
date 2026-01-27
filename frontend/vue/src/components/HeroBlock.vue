@@ -7,26 +7,23 @@ export default defineComponent({
 </script>
 
 <template>
-        <section class="">
-          <div class="pt-12 flex justify-between gap-40">
-            <div>
-              <div class="title">
-                <h1 class="text-[#1A2B4B] text-5xl max-w-[560px] pt-16 max-[768px]:w-[387px] max-[375px]:w-[211px] max-[375px]:text-[20px] ">Корпоративное приложение для вашего бизнеса</h1>
-              </div>
-              <div class="subtitle">
-                <p class="text-[#5F738C] text-lg pt-4 pb-4">Единый цифровой офис для вашей компании</p>
-              </div>
-              <div class="buttons flex gap-4">
-                <button class="text-[#FFFFFF] bg-[#1D65C1] max-w-[195px] w-full h-full max-h-[50px] px-8 py-[13px] active:scale-95 transition-transform cursor-pointer rounded">Оставить заявку</button>
-                <button class="text-[#1A2B4B] flex-1 max-w-[195px] w-full h-full max-h-[50px] border border-[#D1D5DB] px-8 py-[13px] active:scale-95 transition-transform cursor-pointer rounded">Получить демо</button>
-              </div>
-            </div>
-            <div>
-              <div class="">
-                <img src="@/assets/image/hero-block-image.png" class="max-w-[350px] w-full h-auto object-contain" alt="image">
-              </div>
-            </div>
+  <section class="px-4">
+    <div class="max-w-[1120px] mx-auto pt-[60px] md:pt-[112px] flex justify-between items-start gap-4 md:gap-8">
+      <div class="flex flex-col flex-1 min-w-0">
+        <h1 class="text-xl sm:text-3xl md:text-5xl text-[#1A2B4B] ">Корпоративное <br class="hidden md:block">приложение <br class="hidden md:block">для вашего бизнеса</h1>
+        <p class="text-[#5F738C] text-sm md:text-lg mt-4">Единый цифровой офис для вашей компании</p>
+        <div class="flex flex-row items-center gap-2 md:gap-4 mt-3 overflow-visible">
+          <div class="flex flex-row items-center gap-2 md:gap-4 mt-3">
+            <button class="bg-[#1D65C1] hover:bg-[#154a8d] text-white text-[14px] max-[375px]:w-[150px] max-[375px]:h-[50px] xs:text-xs md:text-base px-3 md:px-8 py-3 active:scale-95 transition-all cursor-pointer rounded whitespace-nowrap">Оставить заявку</button>
+            <button class="border border-[#D1D5DB] hover:bg-gray-50 text-[#1A2B4B] text-[14px] max-[375px]:w-[150px] max-[375px]:h-[50px] xs:text-xs md:text-base px-3 md:px-8 py-3 active:scale-95 transition-all cursor-pointer rounded whitespace-nowrap">Получить демо</button>
           </div>
-        </section>
+        </div>
+      </div>
+      <div class="w-[25%] sm:w-[30%] md:w-[300px] flex-shrink-0">
+        <img src="@/assets/image/hero-block-image.png" class="w-full h-auto object-contain" alt="hero"/>
+      </div>
+    </div>
+  </section>
 </template>
+
 
