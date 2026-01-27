@@ -1,9 +1,8 @@
-<script lang="ts">
-import {defineComponent} from 'vue'
-
-export default defineComponent({
-  name: "HeroBlock"
-})
+<script setup lang="ts">
+const scrollToForm = () => {
+  const event = new CustomEvent('scroll-to-contact');
+  window.dispatchEvent(event);
+};
 </script>
 
 <template>
@@ -14,8 +13,8 @@ export default defineComponent({
         <p class="text-[#5F738C] text-sm md:text-lg mt-4">Единый цифровой офис для вашей компании</p>
         <div class="flex flex-row items-center gap-2 md:gap-4 mt-3 overflow-visible">
           <div class="flex flex-row items-center gap-2 md:gap-4 mt-3">
-            <button class="bg-[#1D65C1] hover:bg-[#154a8d] text-white text-[14px] max-[375px]:w-[150px] max-[375px]:h-[50px] xs:text-xs md:text-base px-3 md:px-8 py-3 active:scale-95 transition-all cursor-pointer rounded whitespace-nowrap">Оставить заявку</button>
-            <button class="border border-[#D1D5DB] hover:bg-gray-50 text-[#1A2B4B] text-[14px] max-[375px]:w-[150px] max-[375px]:h-[50px] xs:text-xs md:text-base px-3 md:px-8 py-3 active:scale-95 transition-all cursor-pointer rounded whitespace-nowrap">Получить демо</button>
+            <button @click="scrollToForm" class="bg-[#1D65C1] hover:bg-[#154a8d] text-white text-[14px] max-[375px]:w-[150px] max-[375px]:h-[50px] xs:text-xs md:text-base px-3 md:px-8 py-3 active:scale-95 transition-all cursor-pointer rounded whitespace-nowrap">Оставить заявку</button>
+            <button @click="scrollToForm" class="border border-[#D1D5DB] hover:bg-gray-50 text-[#1A2B4B] text-[14px] max-[375px]:w-[150px] max-[375px]:h-[50px] xs:text-xs md:text-base px-3 md:px-8 py-3 active:scale-95 transition-all cursor-pointer rounded whitespace-nowrap">Получить демо</button>
           </div>
         </div>
       </div>
