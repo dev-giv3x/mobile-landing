@@ -14,4 +14,10 @@ class Module extends Model
         'secondary_content',
         'sort_order',
     ];
+
+    protected static function booted()
+    {
+        static::saved(fn () => cache()->forget('landing_modules'));
+        static::deleted(fn () => cache()->forget('landing_modules'));
+    }
 }

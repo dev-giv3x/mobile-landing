@@ -5,6 +5,9 @@ services:
       dockerfile: docker/php/Dockerfile
     volumes:
       - ./backend/laravel:/var/www/backend/laravel/
+    environment:
+      XDEBUG_MODE: "off"
+      PHP_OPCACHE_ENABLE: 1
     depends_on:
       - db
     networks: [app]

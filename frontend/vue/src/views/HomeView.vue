@@ -3,7 +3,7 @@ import HeroBlock from '../components/HeroBlock.vue'
 import BusinesTroubles from '../components/BusinesTroubles.vue'
 import SolutionBlock from '../components/SolutionBlock.vue'
 import AdventageBlock from '../components/AdventageBlock.vue'
-import ContactFrom from '../components/ContactFrom.vue'
+import ContactForm from '../components/ContactForm.vue'
 import { ref } from 'vue'
 const contactFormRef = ref<InstanceType<typeof ContactForm> | null>(null)
 
@@ -21,5 +21,5 @@ const handleScroll = () => {
     <BusinesTroubles />
     <SolutionBlock />
     <AdventageBlock />
-    <ContactFrom ref="contactFormRef" id="contact-section" />
+    <ContactForm ref="contactFormRef" id="contact-section" />
 </template>

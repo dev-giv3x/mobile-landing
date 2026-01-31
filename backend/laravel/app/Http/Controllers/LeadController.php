@@ -12,11 +12,15 @@ class LeadController extends Controller
     function store(Request $request)
     {
         $data = $request->validate([
-            'name' => 'required|string|max:25',
-            'phone' => 'required|string|max:20',
+            'name' => ['required', 'regex:/^[A-Za-zА-Яа-яЁё\-\s]+$/u'],
+            'phone' => ['required','regex:/^\d{10,12}$/'],
             'email' => 'required|email',
+        ], ['name.required'  => 'Укажите ваше имя',
+            'name.regex'     => 'Имя должно состоять только из букв и тире при необходимости',
+            'phone.required' => 'Укажите ваш телефон',
+            'phone.regex'    => 'Телефон должен состоять от 10 до 12 цифр',
+            'email.required' => 'Укажите адрес электронной почты',
         ]);
-
         try {
             $lead = Lead::create($data);
 
@@ -38,7 +42,7 @@ class LeadController extends Controller
         } catch (\Exception $e) {
             Log::error("Ошибка при обработке лида: " . $e->getMessage());
 
-            return response()->json(['status' => 'error', 'message' => 'Что-то сломалось'], 500);
+            return response()->json(['status' => 'error', 'message' => 'Произошла ошибка при обработке запроса'], 500);
 
         }
     }
