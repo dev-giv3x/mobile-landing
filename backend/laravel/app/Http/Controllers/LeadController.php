@@ -14,12 +14,13 @@ class LeadController extends Controller
         $data = $request->validate([
             'name' => ['required', 'regex:/^[A-Za-zА-Яа-яЁё\-\s]+$/u'],
             'phone' => ['required','regex:/^\d{10,12}$/'],
-            'email' => 'required|email',
+            'email' => ['required', 'regex:/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/'],
         ], ['name.required'  => 'Укажите ваше имя',
             'name.regex'     => 'Имя должно состоять только из букв и тире при необходимости',
             'phone.required' => 'Укажите ваш телефон',
             'phone.regex'    => 'Телефон должен состоять от 10 до 12 цифр',
             'email.required' => 'Укажите адрес электронной почты',
+            'email.regex'    => 'Указана недействительная почта',
         ]);
         try {
             $lead = Lead::create($data);
