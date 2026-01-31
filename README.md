@@ -13,7 +13,7 @@
 
 Далее необходимо выполнить docker compose exec php php artisan migrate для выполнения миграций в базу данных.
 
-После выполнения миграций необходимо выполнить docker compose exec php php artisan migrate --seed для наполнения базы данных тестовыми данными через seeder, можно указать свои данные в backend/laravel/database/ModuleSeeder.php для быстрого наполнения базы данных.
+После выполнения миграций необходимо выполнить docker compose exec php php artisan migrate --seed для наполнения базы данных тестовыми данными через seeder, можно указать свои данные в backend/laravel/database/seeders/ModuleSeeder.php для быстрого наполнения базы данных.
 
 При изменении клиентской части (frontend'a) необходимо выполнить docker compose up -d --build nginx для пересборки клиентской части и применения изменений.
 
