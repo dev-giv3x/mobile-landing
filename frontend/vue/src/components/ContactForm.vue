@@ -74,13 +74,14 @@ defineExpose({
           <span v-if="errors.phone" class="text-red-500 text-xs mt-1">{{ errors.phone[0] }}</span>
         </div>
         <div class="flex flex-col md:flex-row gap-4 items-start"> <div class="flex flex-col w-full md:flex-1">
-          <input v-model="email" type="email" placeholder="E-mail" :class="['w-full bg-white placeholder:text-[#1A2B4B] border px-4 py-3 focus:outline-none rounded transition',errors.email ? 'border-red-500' : 'border-[#D1D5DB] focus:border-[#a3aab3]']"/>
+          <input v-model="email" placeholder="E-mail" :class="['w-full bg-white placeholder:text-[#1A2B4B] border px-4 py-3 focus:outline-none rounded transition',errors.email ? 'border-red-500' : 'border-[#D1D5DB] focus:border-[#a3aab3]']"/>
           <span v-if="errors.email" class="text-red-500 text-xs mt-1">{{ errors.email[0] }}</span>
         </div>
           <button type="submit" :disabled="isLoading" class="text-[#FFFFFF] cursor-pointer bg-[#1D65C1] hover:bg-[#154a8d] w-full md:max-w-[195px] px-8 py-[13px] active:scale-95 transition-all rounded whitespace-nowrap disabled:opacity-50 disabled:cursor-not-allowed disabled:scale-100">
             <span v-if="isLoading">Отправка...</span>
             <span v-else>Оставить заявку</span>
-          </button>        </div>
+          </button>
+        </div>
         <div class="flex justify-center">
           <p class="text-sm text-gray-500">Консультация и демонстрация бесплатно</p>
         </div>
