@@ -9,7 +9,7 @@ const scrollToForm = () => {
   <section class="px-4">
     <div class="max-w-[1120px] mx-auto pt-[60px] md:pt-[112px] flex justify-between items-start gap-4 md:gap-8">
       <div class="flex flex-col flex-1 min-w-0">
-        <h1 class="text-xl sm:text-3xl md:text-5xl text-[#1A2B4B] ">Корпоративное <br class="hidden md:block">приложение <br class="hidden md:block">для вашего бизнеса</h1>
+        <h1 class="text-xl sm:text-3xl md:text-5xl text-[#1A2B4B] ">Корпоративное<br class="hidden md:block">приложение <br class="hidden md:block">для вашего бизнеса</h1>
         <p class="text-[#5F738C] text-sm md:text-lg mt-4">Единый цифровой офис для вашей компании</p>
         <div class="flex flex-row items-center gap-2 md:gap-4 mt-3 overflow-visible">
           <div class="flex flex-row items-center gap-2 md:gap-4 mt-3">
