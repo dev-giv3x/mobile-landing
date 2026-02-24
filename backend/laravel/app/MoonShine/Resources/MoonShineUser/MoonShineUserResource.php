@@ -48,6 +48,7 @@ class MoonShineUserResource extends ModelResource
         ];
     }
 
+
     protected function search(): array
     {
         return [

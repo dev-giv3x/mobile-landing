@@ -13,6 +13,7 @@ return new class extends Migration
             $table->string('name');
             $table->string('phone');
             $table->string('email')->nullable();
+            $table->enum('status', ['new', 'in_process', 'closed'])->default('new');
             $table->timestamps();
         });
     }

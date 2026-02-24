@@ -9,6 +9,12 @@ use MoonShine\ColorManager\Palettes\PurplePalette;
 use MoonShine\ColorManager\ColorManager;
 use MoonShine\Contracts\ColorManager\ColorManagerContract;
 use MoonShine\Contracts\ColorManager\PaletteContract;
+use App\MoonShine\Resources\MoonShineUser\MoonShineUserResource;
+use App\MoonShine\Resources\MoonShineUserRole\MoonShineUserRoleResource;
+use App\MoonShine\Resources\Landing\LandingResource;
+use MoonShine\MenuManager\MenuGroup;
+use MoonShine\MenuManager\MenuItem;
+use App\MoonShine\Resources\Lead\LeadResource;
 
 final class MoonShineLayout extends AppLayout
 {
@@ -26,9 +32,25 @@ final class MoonShineLayout extends AppLayout
 
     protected function menu(): array
     {
-        return [
-            ...parent::menu(),
-        ];
+           return [
+               MenuGroup::make('Система', [
+                   MenuItem::make(MoonShineUserResource::class),
+                   MenuItem::make(MoonShineUserRoleResource::class),
+               ])->canSee(fn() => auth()->user()?->isSuperUser()),
+               MenuItem::make(LandingResource::class, 'Лендинги'),
+               MenuItem::make(LeadResource::class, 'Заявки'),
+
+           ];
+    }
+
+    protected function getFooterMenu(): array
+    {
+        return [];
+    }
+
+    protected function getFooterCopyright(): string
+    {
+        return '';
     }
 
     /**

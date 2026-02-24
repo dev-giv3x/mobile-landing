@@ -55,7 +55,23 @@ const closeModal = () => {
 defineExpose({
   formSection
 })
+const isHovered = ref(false)
 
+const handleInput = (e) => {
+  let val = e.target.value.replace(/\D/g, '')
+
+  if (val.startsWith('7') || val.startsWith('8')) val = val.substring(1)
+
+  val = val.substring(0, 10)
+
+  let result = '+7 '
+  if (val.length > 0) result += '(' + val.substring(0, 3)
+  if (val.length > 3) result += ') ' + val.substring(3, 6)
+  if (val.length > 6) result += '-' + val.substring(6, 8)
+  if (val.length > 8) result += '-' + val.substring(8, 10)
+
+  phone.value = result
+}
 </script>
 
 <template>
@@ -70,7 +86,7 @@ defineExpose({
           <span v-if="errors.name" class="text-red-500 text-xs mt-1">{{ errors.name[0] }}</span>
         </div>
         <div>
-          <input v-model="phone" placeholder="Телефон" :class="['w-full bg-white placeholder:text-[#1A2B4B] border px-4 py-3 focus:outline-none focus:border-[#a3aab3] rounded transition-colors',errors.phone ? 'border-red-500' : 'border-[#D1D5DB]']"/>
+          <input v-model="phone" :value="phone" @input="handleInput" @mouseenter="isHovered = true" @mouseleave="isHovered = false" @focus="isFocused = true" @blur="isFocused = false" :placeholder="(isHovered || isFocused) ? '+7 (___) ___-__-__' : 'Телефон'" :class="[ 'w-full bg-white placeholder:text-[#1A2B4B] border px-4 py-3 focus:outline-none focus:border-[#a3aab3] rounded transition-colors', errors.phone ? 'border-red-500' : 'border-[#D1D5DB]']"/>
           <span v-if="errors.phone" class="text-red-500 text-xs mt-1">{{ errors.phone[0] }}</span>
         </div>
         <div class="flex flex-col md:flex-row gap-4 items-start"> <div class="flex flex-col w-full md:flex-1">
