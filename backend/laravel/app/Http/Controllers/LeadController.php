@@ -31,6 +31,12 @@ class LeadController extends Controller
         try {
             $lead = Lead::create($data);
 
+            broadcast(new \App\Events\NewLeadEvent([
+                'name' => $lead->name,
+                'phone' => $lead->phone,
+                'email' => $lead->email
+            ]))->toOthers();
+
             $managerIds = MoonshineUser::query()
                 ->join('moonshine_user_roles', 'moonshine_users.moonshine_user_role_id', '=', 'moonshine_user_roles.id')
                 ->where('moonshine_user_roles.name', 'Manager')

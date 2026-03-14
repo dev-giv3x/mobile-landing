@@ -7,26 +7,24 @@ namespace App\MoonShine\Resources\Lead;
 use App\Models\Lead;
 use App\MoonShine\Resources\Lead\Pages\LeadDetailPage;
 use App\MoonShine\Resources\Lead\Pages\LeadFormPage;
-use App\MoonShine\Resources\Lead\Pages\LeadIndexPage;
+use App\MoonShine\Resources\Lead\Pages\MyLeadIndexPage;
 use Illuminate\Contracts\Database\Eloquent\Builder as BuilderContract;
 use MoonShine\Laravel\Resources\ModelResource;
 
 /**
- * @extends ModelResource<Lead, LeadIndexPage, LeadFormPage, LeadDetailPage>
+ * @extends ModelResource<Lead, MyLeadIndexPage, LeadFormPage, LeadDetailPage>
  */
-class LeadResource extends ModelResource
+class MyLeadResource extends ModelResource
 {
     protected bool $withPolicy = true;
     protected string $model = Lead::class;
-
-    protected string $title = 'Заявки';
-
+    protected string $title = 'Мои заявки';
     protected bool $simplePaginate = true;
 
     protected function pages(): array
     {
         return [
-            LeadIndexPage::class,
+            MyLeadIndexPage::class,
             LeadFormPage::class,
             LeadDetailPage::class,
         ];
@@ -34,11 +32,15 @@ class LeadResource extends ModelResource
 
     protected function modifyQueryBuilder(BuilderContract $builder): BuilderContract
     {
-        if (! $this->isAdmin()) {
-            return $builder->where('status', 'new');
+        $user = auth()->user();
+
+        if (! $user || $this->isAdmin()) {
+            return $builder->whereRaw('1 = 0');
         }
 
-        return $builder;
+        return $builder
+            ->where('moonshine_user_id', $user->id)
+            ->whereIn('status', ['in_process', 'closed']);
     }
 
     private function isAdmin(): bool

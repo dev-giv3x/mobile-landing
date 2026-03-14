@@ -14,6 +14,7 @@ const handleScroll = () => {
     element.scrollIntoView({ behavior: 'smooth' })
   }
 }
+
 </script>
 
 <template>

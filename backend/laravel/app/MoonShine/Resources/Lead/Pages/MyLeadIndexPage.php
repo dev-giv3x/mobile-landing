@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\MoonShine\Resources\Lead\Pages;
 
-use App\MoonShine\Resources\Lead\LeadResource;
+use App\MoonShine\Resources\Lead\MyLeadResource;
 use MoonShine\Laravel\Pages\Crud\IndexPage;
 use MoonShine\Support\ListOf;
 use MoonShine\UI\Components\ActionButton;
@@ -14,9 +14,9 @@ use MoonShine\UI\Fields\Select;
 use MoonShine\UI\Fields\Text;
 
 /**
- * @extends IndexPage<LeadResource>
+ * @extends IndexPage<MyLeadResource>
  */
-class LeadIndexPage extends IndexPage
+class MyLeadIndexPage extends IndexPage
 {
     protected function fields(): iterable
     {
@@ -31,8 +31,8 @@ class LeadIndexPage extends IndexPage
                     'in_process' => 'В работе',
                     'closed' => 'Закрыт',
                 ])
-                ->default('new')
                 ->badge(fn ($status) => $status === 'new' ? 'warning' : ($status === 'in_process' ? 'info' : 'success')),
+            Text::make('Лендинг', 'landing.title'),
             Date::make('Дата создания', 'created_at')->sortable(),
         ];
     }
@@ -42,23 +42,12 @@ class LeadIndexPage extends IndexPage
         $buttons = parent::buttons();
 
         $buttons->prepend(
-            ActionButton::make('Принять', fn ($item) => route('moonshine.leads.accept', $item->getKey()))
-                ->icon('check')
-                ->success()
-                ->canSee(fn ($item) => $this->isManager() && ($item?->status ?? null) === 'new')
+            ActionButton::make('Закрыть', fn ($item) => $this->getResource()->getFormPageUrl($item->getKey()))
+                ->icon('x-circle')
+                ->warning()
+                ->canSee(fn ($item) => ($item?->status ?? null) !== 'closed')
         );
 
         return $buttons;
-    }
-
-    private function isManager(): bool
-    {
-        $user = auth()->user();
-
-        if (! $user) {
-            return false;
-        }
-
-        return ! ($user->isSuperUser() || $user->moonshineUserRole?->name === 'Admin');
     }
 }

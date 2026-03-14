@@ -27,6 +27,23 @@ services:
       - php
     networks: [app]
 
+  reverb:
+    build:
+      context: .
+      dockerfile: docker/php/Dockerfile
+    working_dir: /var/www/backend/laravel
+    command: php artisan reverb:start --host=0.0.0.0 --port=8080
+    ports:
+      - "8090:8080"
+    environment:
+      - APP_ENV=local
+    volumes:
+      - .:/var/www/html
+      - ./backend/laravel:/var/www/backend/laravel/
+    depends_on:
+      - db
+    networks: [app]
+
   phpmyadmin:
     image: phpmyadmin
     container_name: pma

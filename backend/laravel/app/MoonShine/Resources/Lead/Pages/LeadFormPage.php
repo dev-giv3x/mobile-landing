@@ -4,18 +4,17 @@ declare(strict_types=1);
 
 namespace App\MoonShine\Resources\Lead\Pages;
 
-use MoonShine\Laravel\Pages\Crud\FormPage;
+use App\Models\Landing;
+use App\MoonShine\Resources\Lead\LeadResource;
+use Illuminate\Validation\Rule;
 use MoonShine\Contracts\UI\ComponentContract;
-use MoonShine\Contracts\UI\FormBuilderContract;
-use MoonShine\UI\Components\FormBuilder;
 use MoonShine\Contracts\UI\FieldContract;
 use MoonShine\Contracts\Core\TypeCasts\DataWrapperContract;
-use App\MoonShine\Resources\Lead\LeadResource;
-use MoonShine\Support\ListOf;
-use MoonShine\UI\Fields\ID;
+use MoonShine\Laravel\Pages\Crud\FormPage;
 use MoonShine\UI\Components\Layout\Box;
-use Throwable;
-
+use MoonShine\UI\Fields\ID;
+use MoonShine\UI\Fields\Select;
+use MoonShine\UI\Fields\Text;
 
 /**
  * @extends FormPage<LeadResource>
@@ -30,65 +29,57 @@ class LeadFormPage extends FormPage
         return [
             Box::make([
                 ID::make(),
+                Text::make('Имя', 'name')->readonly(),
+                Text::make('Телефон', 'phone')->readonly(),
+                Text::make('Почта', 'email')->readonly(),
+                Select::make('Статус', 'status')
+                    ->options([
+                        'new' => 'Новый',
+                        'in_process' => 'В работе',
+                        'closed' => 'Закрыт',
+                    ])
+                    ->default('new')
+                    ->required(),
+                Select::make('Лендинг', 'landing_id')
+                    ->options(fn () => $this->landingOptions())
+                    ->searchable()
+                    ->nullable(),
             ]),
         ];
     }
 
-    protected function buttons(): ListOf
-    {
-        return parent::buttons();
-    }
-
-    protected function formButtons(): ListOf
-    {
-        return parent::formButtons();
-    }
-
     protected function rules(DataWrapperContract $item): array
     {
-        return [];
-    }
+        $user = auth()->user();
+        $landingRule = Rule::exists('landings', 'id');
 
-    /**
-     * @param  FormBuilder  $component
-     *
-     * @return FormBuilder
-     */
-    protected function modifyFormComponent(FormBuilderContract $component): FormBuilderContract
-    {
-        return $component;
-    }
+        if ($user && ! $this->isAdmin($user)) {
+            $landingRule = $landingRule->where('moonshine_user_id', $user->id);
+        }
 
-    /**
-     * @return list<ComponentContract>
-     * @throws Throwable
-     */
-    protected function topLayer(): array
-    {
         return [
-            ...parent::topLayer()
+            'status' => ['required', Rule::in(['new', 'in_process', 'closed'])],
+            'landing_id' => ['nullable', 'required_if:status,closed', $landingRule],
         ];
     }
 
     /**
-     * @return list<ComponentContract>
-     * @throws Throwable
+     * @return array<int|string, string>
      */
-    protected function mainLayer(): array
+    private function landingOptions(): array
     {
-        return [
-            ...parent::mainLayer()
-        ];
+        $query = Landing::query()->select(['id', 'title']);
+        $user = auth()->user();
+
+        if ($user && ! $this->isAdmin($user)) {
+            $query->where('moonshine_user_id', $user->id);
+        }
+
+        return $query->orderBy('title')->pluck('title', 'id')->toArray();
     }
 
-    /**
-     * @return list<ComponentContract>
-     * @throws Throwable
-     */
-    protected function bottomLayer(): array
+    private function isAdmin($user): bool
     {
-        return [
-            ...parent::bottomLayer()
-        ];
+        return $user && ($user->isSuperUser() || $user->moonshineUserRole?->name === 'Admin');
     }
 }

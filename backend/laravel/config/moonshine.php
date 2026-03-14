@@ -94,6 +94,8 @@ return [
         'filters' => FiltersForm::class,
     ],
 
+
+
     'pages' => [
         'dashboard' => App\MoonShine\Pages\Dashboard::class,
         'profile' => ProfilePage::class,

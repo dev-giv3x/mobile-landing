@@ -4,13 +4,14 @@ declare(strict_types=1);
 
 namespace App\MoonShine\Resources\MoonShineUserRole;
 
-use MoonShine\Laravel\Models\MoonshineUserRole;
-use MoonShine\Laravel\Resources\ModelResource;
 use App\MoonShine\Resources\MoonShineUserRole\Pages\MoonShineUserRoleFormPage;
 use App\MoonShine\Resources\MoonShineUserRole\Pages\MoonShineUserRoleIndexPage;
+use MoonShine\Laravel\Models\MoonshineUserRole;
+use MoonShine\Laravel\Resources\ModelResource;
 use MoonShine\MenuManager\Attributes\Group;
 use MoonShine\MenuManager\Attributes\Order;
 use MoonShine\Support\Attributes\Icon;
+use MoonShine\Support\Enums\Ability;
 use MoonShine\Support\Enums\Action;
 use MoonShine\Support\ListOf;
 
@@ -41,7 +42,22 @@ class MoonShineUserRoleResource extends ModelResource
 
     protected function activeActions(): ListOf
     {
-        return parent::activeActions()->except(Action::VIEW);
+        $actions = parent::activeActions()->except(Action::VIEW);
+
+        if (! $this->isAdmin()) {
+            return $actions->except(Action::CREATE, Action::EDIT, Action::DELETE, Action::MASS_DELETE);
+        }
+
+        return $actions;
+    }
+
+    protected function isCan(Ability $ability): bool
+    {
+        if (in_array($ability, [Ability::CREATE, Ability::UPDATE, Ability::DELETE, Ability::MASS_DELETE], true)) {
+            return $this->isAdmin();
+        }
+
+        return parent::isCan($ability);
     }
 
     protected function pages(): array
@@ -58,5 +74,16 @@ class MoonShineUserRoleResource extends ModelResource
             'id',
             'name',
         ];
+    }
+
+    private function isAdmin(): bool
+    {
+        $user = auth()->user();
+
+        if (! $user) {
+            return false;
+        }
+
+        return $user->isSuperUser() || $user->moonshineUserRole?->name === 'Admin';
     }
 }

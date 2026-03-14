@@ -10,10 +10,13 @@ return new class extends Migration
     {
         Schema::create('leads', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('landing_id')->nullable()->constrained()->nullOnDelete();
+            $table->foreignId('moonshine_user_id')->nullable()->constrained('moonshine_users');
             $table->string('name');
             $table->string('phone');
-            $table->string('email')->nullable();
+            $table->string('email');
             $table->enum('status', ['new', 'in_process', 'closed'])->default('new');
+            $table->timestamp('closed_at')->nullable();
             $table->timestamps();
         });
     }
