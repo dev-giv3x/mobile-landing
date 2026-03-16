@@ -9,6 +9,11 @@ use App\MoonShine\Resources\Landing\Pages\LandingDetailPage;
 use App\MoonShine\Resources\Landing\Pages\LandingFormPage;
 use App\MoonShine\Resources\Landing\Pages\LandingIndexPage;
 use MoonShine\Laravel\Resources\ModelResource;
+use Illuminate\Database\Eloquent\Model;
+use MoonShine\Contracts\Core\DependencyInjection\FieldsContract;
+use MoonShine\Contracts\Core\TypeCasts\DataWrapperContract;
+
+
 
 /**
  * @extends ModelResource<Landing, LandingIndexPage, LandingFormPage, LandingDetailPage>

@@ -4,6 +4,8 @@ namespace App\Models;
 
 use App\Support\LandingTemplate;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Casts\AsArrayObject;
+
 
 class Landing extends Model
 {
@@ -16,10 +18,48 @@ class Landing extends Model
         'moonshine_user_id',
     ];
 
+
+
     protected $casts = [
         'settings' => 'array',
         'content' => 'array',
     ];
+
+    public function getPrimaryColorAttribute(): string
+    {
+        return $this->settings['primary_color'] ?? '#1D65C1';
+    }
+
+    public function setPrimaryColorAttribute(string $value): void
+    {
+        $settings = $this->settings;
+        $settings['primary_color'] = $value;
+        $this->settings = $settings;
+    }
+
+    public function getLogoAttribute()
+    {
+        return $this->settings['logo'] ?? null;
+    }
+
+    public function setLogoAttribute($value): void
+    {
+        $settings = $this->settings;
+        $settings['logo'] = $value;
+        $this->settings = $settings;
+    }
+
+    public function getHeroImageAttribute()
+    {
+        return $this->content['hero']['image'] ?? null;
+    }
+
+    public function setHeroImageAttribute($value): void
+    {
+        $content = $this->content;
+        $content['hero']['image'] = $value;
+        $this->content = $content;
+    }
 
     protected static function booted(): void
     {
@@ -29,38 +69,4 @@ class Landing extends Model
             }
         });
     }
-
-//    public function getContentAttribute(mixed $value): array
-//    {
-//        $content = $this->decodeJson($value);
-//
-//        return LandingTemplate::normalizeContentForForm($this, $content);
-//    }
-//
-//    public function getSettingsAttribute(mixed $value): array
-//    {
-//        $settings = $this->decodeJson($value);
-//
-//        return LandingTemplate::normalizeSettings($settings);
-//    }
-
-    private function decodeJson(mixed $value): array
-    {
-        if (is_array($value)) {
-            return $value;
-        }
-
-        if (is_string($value)) {
-            $decoded = json_decode($value, true);
-
-            return is_array($decoded) ? $decoded : [];
-        }
-
-        return [];
-    }
-
-//    protected $attributes = [
-//        'settings' => '{}',
-//        'content' => '{}',
-//    ];
 }

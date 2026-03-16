@@ -47,10 +47,10 @@ class LandingFormPage extends FormPage
                     ]),
 
                     Collapse::make('Стилизация', [
-                        Color::make('Основной цвет', 'settings->primary_color')
+                        Color::make('Основной цвет', 'primary_color')
                             ->default('#1D65C1'),
 
-                        Image::make('Логотип', 'settings->logo')
+                        Image::make('Логотип', 'logo')
                             ->dir('landings/logos')
                             ->removable(),
                     ]),
@@ -69,7 +69,7 @@ class LandingFormPage extends FormPage
                         Textarea::make('Подзаголовок', 'content->hero->subtitle')
                             ->placeholder('Соберите коммуникации, сервисы и ключевые процессы в одном удобном мобильном интерфейсе.'),
 
-                        Image::make('Изображение hero', 'content->hero->image')
+                        Image::make('Изображение hero', 'hero_image')
                             ->dir('landings/hero')
                             ->removable(),
 
@@ -258,22 +258,24 @@ class LandingFormPage extends FormPage
     };
 
     const parsePath = (key) => {
-        const normalized = key
-            .replaceAll('->', '.')
-            .replaceAll('][', '.')
-            .replaceAll('[', '.')
-            .replaceAll(']', '')
-            .replaceAll('__rm__', '')
-            .replace(/^\./, '');
+    const normalized = key
+        .replaceAll('->', '.')
+        .replaceAll('][', '.')
+        .replaceAll('[', '.')
+        .replaceAll(']', '')
+        .replaceAll('__rm__', '')
+        .replace(/^\./, '');
 
-        return normalized.split('.').filter(Boolean).map((segment) => {
-            if (segment.endsWith('_hidden')) {
-                return segment.slice(0, -7);
-            }
-
-            return segment;
-        });
-    };
+    return normalized.split('.').filter(Boolean).map((segment) => {
+        if (segment.endsWith('_hidden')) {
+            return segment.slice(0, -7);
+        }
+        if (segment.startsWith('hidden_')) {
+            return segment.slice(7);
+        }
+        return segment;
+    });
+};
 
     const setNestedValue = (target, path, value) => {
         let cursor = target;
@@ -340,37 +342,64 @@ class LandingFormPage extends FormPage
     };
 
     const readFormState = () => {
-        const formData = new FormData(form);
-        const state = {};
+         const formData = new FormData(form);
+    const state = {};
 
-        formData.forEach((value, key) => {
-            if (key.startsWith('_token') || key.startsWith('_method') || key.includes('__table')) {
-                return;
-            }
+    formData.forEach((value, key) => {
+        if (key.startsWith('_token') || key.startsWith('_method') || key.includes('__table')) {
+            return;
+        }
 
-            if (value instanceof File) {
-                if (!value.name) {
-                    return;
-                }
+        if (value instanceof File) {
+            if (!value.name) return;
+            if (objectUrls.has(key)) URL.revokeObjectURL(objectUrls.get(key));
+            const fileUrl = URL.createObjectURL(value);
+            objectUrls.set(key, fileUrl);
+            setNestedValue(state, parsePath(key), { __fileUrl: fileUrl, name: value.name });
+            return;
+        }
 
-                if (objectUrls.has(key)) {
-                    URL.revokeObjectURL(objectUrls.get(key));
-                }
+        setNestedValue(state, parsePath(key), value);
+    });
 
-                const fileUrl = URL.createObjectURL(value);
-                objectUrls.set(key, fileUrl);
-                setNestedValue(state, parsePath(key), { __fileUrl: fileUrl, name: value.name });
-                return;
-            }
+         const merged = mergeDeep(defaults, normalizeArrays(state));
 
-            setNestedValue(state, parsePath(key), value);
-        });
 
-        const merged = mergeDeep(defaults, normalizeArrays(state));
-        merged.content.hero.enabled = !!Number(merged.content.hero.enabled ?? 0) || merged.content.hero.enabled === true;
+    if (merged.primary_color !== undefined) {
+        if (!merged.settings) merged.settings = {};
+        merged.settings.primary_color = merged.primary_color;
+        delete merged.primary_color;
+    }
 
-        return merged;
-    };
+
+    if (merged.hidden_logo !== undefined) {
+        if (!merged.settings) merged.settings = {};
+        merged.settings.logo = merged.hidden_logo;
+        delete merged.hidden_logo;
+    }
+    if (merged.logo !== undefined) {
+        if (!merged.settings) merged.settings = {};
+        merged.settings.logo = merged.logo;
+        delete merged.logo;
+    }
+
+
+    if (merged.hidden_hero_image !== undefined) {
+        if (!merged.content) merged.content = {};
+        if (!merged.content.hero) merged.content.hero = {};
+        merged.content.hero.image = merged.hidden_hero_image;
+        delete merged.hidden_hero_image;
+    }
+    if (merged.hero_image !== undefined) {
+        if (!merged.content) merged.content = {};
+        if (!merged.content.hero) merged.content.hero = {};
+        merged.content.hero.image = merged.hero_image;
+        delete merged.hero_image;
+    }
+
+    merged.content.hero.enabled = !!Number(merged.content.hero.enabled ?? 0) || merged.content.hero.enabled === true;
+    return merged;
+};
 
     const renderImage = (src, alt, extraStyle = '') => {
         const normalized = normalizeAsset(src);
@@ -399,7 +428,7 @@ class LandingFormPage extends FormPage
 
         return renderListCards(items, (item) => `
             <div style="padding:18px;border-radius:18px;background:#fff;border:1px solid #e5e7eb;">
-                <div style="display:inline-flex;padding:6px 10px;border-radius:999px;background:${escapeHtml(primaryColor)}12;color:${escapeHtml(primaryColor)};font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;">Р­РєСЂР°РЅ</div>
+                <div style="display:inline-flex;padding:6px 10px;border-radius:999px;background:${escapeHtml(primaryColor)}12;color:${escapeHtml(primaryColor)};font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;">Модуль</div>
                 <div style="margin-top:12px;font-size:16px;font-weight:700;line-height:1.3;color:#10203d;">${escapeHtml(item.title || '')}</div>
                 <div style="margin-top:10px;font-size:14px;line-height:1.6;color:#536277;">${escapeHtml(item.description || '')}</div>
             </div>
@@ -426,7 +455,7 @@ class LandingFormPage extends FormPage
                         <div style="font-size:13px;color:#6b7a90;margin-top:4px;">/${escapeHtml(data.slug || '')}</div>
                     </div>
                     <div>
-                        ${renderImage(data.settings?.logo, data.company_name, 'width:48px;height:48px;object-fit:contain;border-radius:12px;background:#fff;border:1px solid #e5e7eb;padding:6px;')}
+                        ${renderImage(data.settings?.logo || data.settings?.hidden_logo, data.company_name, 'width:48px;height:48px;object-fit:contain;border-radius:12px;background:#fff;border:1px solid #e5e7eb;padding:6px;')}
                     </div>
                 </div>
 
@@ -438,13 +467,13 @@ class LandingFormPage extends FormPage
                         <p style="margin:12px 0 0;font-size:14px;line-height:1.6;color:#536277;">${escapeHtml(hero.subtitle || '')}</p>
                     </div>
                     <div style="display:flex;justify-content:center;align-items:center;min-height:160px;">
-                        ${renderImage(hero.image, hero.image_alt, 'width:100%;max-width:220px;max-height:220px;object-fit:contain;') || `<div style="width:100%;max-width:220px;aspect-ratio:1/1;border-radius:20px;background:linear-gradient(135deg, ${escapeHtml(primaryColor)}22 0%, #ffffff 100%);border:1px dashed ${escapeHtml(primaryColor)}55;"></div>`}
+                        ${renderImage(hero.image || hero.hidden_image, hero.image_alt, 'width:100%;max-width:220px;max-height:220px;object-fit:contain;') || `<div style="width:100%;max-width:220px;aspect-ratio:1/1;border-radius:20px;background:linear-gradient(135deg, ${escapeHtml(primaryColor)}22 0%, #ffffff 100%);border:1px dashed ${escapeHtml(primaryColor)}55;"></div>`}
                     </div>
                 </section>` : ''}
 
                 <section style="margin-top:20px;">
                     <div style="font-size:22px;font-weight:700;text-align:center;">${escapeHtml(goals.section_title || '')}</div>
-                    <div style="margin-top:14px;">${renderListCards(goals.items, (item) => `<div style="padding:16px;border-radius:18px;background:#fff;border:1px solid #e5e7eb;display:flex;align-items:center;gap:12px;min-height:84px;">${renderImage(item.hidden_image, item.title, 'width:48px;height:48px;object-fit:contain;') || `<div style="width:48px;height:48px;border-radius:14px;background:${escapeHtml(primaryColor)}12;"></div>`}<div style="font-size:14px;font-weight:600;line-height:1.4;">${escapeHtml(item.title || '')}</div></div>`, 1)}</div>
+                    <div style="margin-top:14px;">${renderListCards(goals.items, (item) => `<div style="padding:16px;border-radius:18px;background:#fff;border:1px solid #e5e7eb;display:flex;align-items:center;gap:12px;min-height:84px;">${renderImage(item.hidden_image || item.image, item.title, 'width:48px;height:48px;object-fit:contain;') || `<div style="width:48px;height:48px;border-radius:14px;background:${escapeHtml(primaryColor)}12;"></div>`}<div style="font-size:14px;font-weight:600;line-height:1.4;">${escapeHtml(item.title || '')}</div></div>`, 1)}</div>
                 </section>
 
                 <section style="margin-top:22px;">
@@ -460,7 +489,7 @@ class LandingFormPage extends FormPage
 
                 <section style="margin-top:22px;">
                     <div style="font-size:22px;font-weight:700;text-align:center;">${escapeHtml(advantages.section_title || '')}</div>
-                    <div style="margin-top:14px;">${renderListCards(advantages.items, (item) => `<div style="padding:18px;border-radius:18px;background:#fff;border:1px solid #e5e7eb;text-align:center;">${renderImage(item.hidden_image, item.title, 'width:72px;height:72px;object-fit:contain;margin:0 auto 12px;') || `<div style="width:72px;height:72px;border-radius:20px;background:${escapeHtml(primaryColor)}12;margin:0 auto 12px;"></div>`}<div style="font-size:14px;font-weight:600;line-height:1.4;">${escapeHtml(item.title || '')}</div></div>`, 3)}</div>
+                    <div style="margin-top:14px;">${renderListCards(advantages.items, (item) => `<div style="padding:18px;border-radius:18px;background:#fff;border:1px solid #e5e7eb;text-align:center;">${renderImage(item.hidden_image || item.image, item.title, 'width:72px;height:72px;object-fit:contain;margin:0 auto 12px;') || `<div style="width:72px;height:72px;border-radius:20px;background:${escapeHtml(primaryColor)}12;margin:0 auto 12px;"></div>`}<div style="font-size:14px;font-weight:600;line-height:1.4;">${escapeHtml(item.title || '')}</div></div>`, 3)}</div>
                 </section>
             </div>
         `;
