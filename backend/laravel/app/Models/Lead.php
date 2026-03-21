@@ -20,6 +20,23 @@ class Lead extends Model
         'created_at',
     ];
 
+    protected $casts = [
+        'closed_at' => 'datetime',
+    ];
+
+    protected static function booted(): void
+    {
+        static::saving(function (self $lead): void {
+            if ($lead->status === 'closed' && $lead->closed_at === null) {
+                $lead->closed_at = now();
+            }
+
+            if ($lead->status !== 'closed') {
+                $lead->closed_at = null;
+            }
+        });
+    }
+
     protected function phone(): Attribute
     {
         return Attribute::make(

@@ -8,17 +8,13 @@ const props = defineProps<{
 
 const primaryColor = computed(() => props.landing.settings.primary_color || '#1D65C1')
 
-
 const iconModules = import.meta.glob('../assets/icons/*.svg', {
   eager: true,
   import: 'default',
 }) as Record<string, string>
 
 const resolveIcon = (name?: string | null) => {
-  if (!name) {
-    return ''
-  }
-
+  if (!name) return ''
   return iconModules[`../assets/icons/${name}.svg`] ?? ''
 }
 
@@ -36,11 +32,12 @@ const structureItems = computed(() => [
     description: props.landing.content.structure.communications_description,
   },
 ])
-
 </script>
 
 <template>
   <main class="min-h-screen bg-[radial-gradient(circle_at_top,_#edf5ff_0%,_#f8fbff_36%,_#ffffff_100%)] text-slate-900 font-[Inter,Arial,sans-serif]">
+
+    <!-- Hero -->
     <section v-if="landing.content.hero.enabled" class="px-4 pt-6 md:pt-10">
       <div
           class="mx-auto grid max-w-[1200px] gap-8 rounded-[36px] border p-6 shadow-[0_30px_100px_rgba(15,23,42,0.08)] md:p-10"
@@ -54,7 +51,6 @@ const structureItems = computed(() => [
           >
             {{ landing.content.hero.eyebrow }}
           </div>
-
           <h1 class="mt-4 text-4xl leading-tight font-extrabold tracking-tight text-[#10203d] md:text-5xl">
             {{ landing.content.hero.title }}
           </h1>
@@ -79,6 +75,7 @@ const structureItems = computed(() => [
       </div>
     </section>
 
+    <!-- Header -->
     <div v-if="!landing.content.hero.enabled" class="px-4 pt-6 md:pt-10">
       <div class="mx-auto flex max-w-[1200px] items-center justify-between gap-4">
         <div>
@@ -94,12 +91,12 @@ const structureItems = computed(() => [
       </div>
     </div>
 
+    <!-- Goals -->
     <section class="px-4 pt-16">
       <div class="mx-auto max-w-[1120px]">
         <h2 class="text-center text-3xl font-bold tracking-tight text-[#10203d] md:text-4xl">
           {{ landing.content.goals.section_title }}
         </h2>
-
         <div class="mt-10 grid gap-4">
           <article
               v-for="(item, index) in landing.content.goals.items"
@@ -116,6 +113,7 @@ const structureItems = computed(() => [
       </div>
     </section>
 
+    <!-- Functionality (Modules) -->
     <section class="px-4 pt-16">
       <div class="mx-auto max-w-[1120px]">
         <div class="mx-auto max-w-[760px] text-center">
@@ -139,12 +137,16 @@ const structureItems = computed(() => [
                   class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl"
                   :style="{ backgroundColor: `${primaryColor}18` }"
               >
-                <img
+                <!-- Primary icon as mask -->
+                <div
                     v-if="resolveIcon(module.primary_icon)"
-                    :src="resolveIcon(module.primary_icon)"
-                    :alt="module.title"
-                    class="h-5 w-5 object-contain"
-                />
+                    class="icon-mask h-5 w-5"
+                    :style="{
+                        backgroundColor: primaryColor,
+                        maskImage: `url(${resolveIcon(module.primary_icon)})`,
+                        WebkitMaskImage: `url(${resolveIcon(module.primary_icon)})`
+                    }"
+                ></div>
                 <div v-else class="h-4 w-4 rounded-md" :style="{ backgroundColor: `${primaryColor}55` }"></div>
               </div>
             </div>
@@ -158,12 +160,16 @@ const structureItems = computed(() => [
                   class="flex h-5 w-5 shrink-0 items-center justify-center rounded-full"
                   :style="{ backgroundColor: `${primaryColor}12` }"
               >
-                <img
+                <!-- Secondary icon as mask -->
+                <div
                     v-if="resolveIcon(module.secondary_icon)"
-                    :src="resolveIcon(module.secondary_icon)"
-                    :alt="module.secondary_text || module.title"
-                    class="h-3 w-3 object-contain"
-                />
+                    class="icon-mask h-3 w-3"
+                    :style="{
+                        backgroundColor: primaryColor,
+                        maskImage: `url(${resolveIcon(module.secondary_icon)})`,
+                        WebkitMaskImage: `url(${resolveIcon(module.secondary_icon)})`
+                    }"
+                ></div>
               </div>
               <span>{{ module.secondary_text }}</span>
             </div>
@@ -172,12 +178,12 @@ const structureItems = computed(() => [
       </div>
     </section>
 
+    <!-- Structure -->
     <section class="px-4 pt-16">
       <div class="mx-auto max-w-[1120px]">
         <h2 class="text-center text-3xl font-bold tracking-tight text-[#10203d] md:text-4xl">
           {{ landing.content.structure.section_title }}
         </h2>
-
         <div class="mt-10 grid gap-4">
           <article
               v-for="(item, index) in structureItems"
@@ -197,12 +203,12 @@ const structureItems = computed(() => [
       </div>
     </section>
 
+    <!-- Advantages -->
     <section class="px-4 pt-16 pb-16">
       <div class="mx-auto max-w-[1120px]">
         <h2 class="text-center text-3xl font-bold tracking-tight text-[#10203d] md:text-4xl">
           {{ landing.content.advantages.section_title }}
         </h2>
-
         <div class="mt-10 grid gap-5 md:grid-cols-3">
           <div
               v-for="(item, index) in landing.content.advantages.items"
@@ -221,3 +227,15 @@ const structureItems = computed(() => [
 
   </main>
 </template>
+
+<style scoped>
+.icon-mask {
+  background-color: currentColor;
+  mask-size: contain;
+  mask-repeat: no-repeat;
+  mask-position: center;
+  -webkit-mask-size: contain;
+  -webkit-mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+}
+</style>

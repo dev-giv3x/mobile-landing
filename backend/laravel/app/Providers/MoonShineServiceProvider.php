@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Providers;
 
+use App\MoonShine\Pages\LogsPage;
+use App\MoonShine\Pages\StatisticsPage;
 use App\MoonShine\Resources\Landing\LandingResource;
 use App\MoonShine\Resources\Lead\LeadResource;
 use App\MoonShine\Resources\Lead\MyLeadResource;
@@ -30,6 +32,8 @@ class MoonShineServiceProvider extends ServiceProvider
             ])
             ->pages([
                 ...$core->getConfig()->getPages(),
+                StatisticsPage::class,
+                LogsPage::class,
             ]);
     }
 }

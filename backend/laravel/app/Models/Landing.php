@@ -4,7 +4,6 @@ namespace App\Models;
 
 use App\Support\LandingTemplate;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Casts\AsArrayObject;
 
 
 class Landing extends Model

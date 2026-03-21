@@ -18,6 +18,17 @@ use MoonShine\UI\Fields\Text;
  */
 class MyLeadIndexPage extends IndexPage
 {
+    protected function filters(): iterable
+    {
+        return [
+            Select::make('Статус', 'status')
+                ->options([
+                    'in_process' => 'В работе',
+                    'closed' => 'Закрыт',
+                ]),
+        ];
+    }
+
     protected function fields(): iterable
     {
         return [
@@ -31,6 +42,7 @@ class MyLeadIndexPage extends IndexPage
                     'in_process' => 'В работе',
                     'closed' => 'Закрыт',
                 ])
+                ->sortable()
                 ->badge(fn ($status) => $status === 'new' ? 'warning' : ($status === 'in_process' ? 'info' : 'success')),
             Text::make('Лендинг', 'landing.title'),
             Date::make('Дата создания', 'created_at')->sortable(),

@@ -4,12 +4,13 @@ declare(strict_types=1);
 
 namespace App\MoonShine\Layouts;
 
+use App\MoonShine\Pages\LogsPage;
+use App\MoonShine\Pages\StatisticsPage;
 use App\MoonShine\Resources\Landing\LandingResource;
 use App\MoonShine\Resources\Lead\LeadResource;
 use App\MoonShine\Resources\Lead\MyLeadResource;
 use App\MoonShine\Resources\MoonShineUser\MoonShineUserResource;
 use App\MoonShine\Resources\MoonShineUserRole\MoonShineUserRoleResource;
-use MoonShine\AssetManager\Css;
 use MoonShine\AssetManager\Js;
 use MoonShine\ColorManager\Palettes\PurplePalette;
 use MoonShine\Contracts\ColorManager\ColorManagerContract;
@@ -41,10 +42,13 @@ final class MoonShineLayout extends AppLayout
             MenuGroup::make('Система', [
                 MenuItem::make(MoonShineUserResource::class),
                 MenuItem::make(MoonShineUserRoleResource::class),
+                MenuItem::make(LogsPage::class, 'Логи'),
             ])->canSee(fn () => $this->isAdmin()),
             MenuItem::make(LandingResource::class, 'Лендинги'),
             MenuItem::make(LeadResource::class, 'Заявки'),
             MenuItem::make(MyLeadResource::class, 'Мои заявки')
+                ->canSee(fn () => $this->isManager()),
+            MenuItem::make(StatisticsPage::class, 'Статистика')
                 ->canSee(fn () => $this->isManager()),
         ];
     }
@@ -65,8 +69,6 @@ final class MoonShineLayout extends AppLayout
     protected function colors(ColorManagerContract $colorManager): void
     {
         parent::colors($colorManager);
-
-        // $colorManager->primary('#00000');
     }
 
     private function isAdmin(): bool
