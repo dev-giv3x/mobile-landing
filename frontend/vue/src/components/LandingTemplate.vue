@@ -10,12 +10,16 @@ const primaryColor = computed(() => props.landing.settings.primary_color || '#1D
 
 const iconModules = import.meta.glob('../assets/icons/*.svg', {
   eager: true,
+  query: '?raw', // Важно: Vite подтянет содержимое файла как строку
   import: 'default',
 }) as Record<string, string>
 
 const resolveIcon = (name?: string | null) => {
   if (!name) return ''
-  return iconModules[`../assets/icons/${name}.svg`] ?? ''
+  const normalizedName = name.endsWith('-mask') ? name : `${name}-mask`
+
+  // Ищем в объекте модулей
+  return iconModules[`../assets/icons/${normalizedName}.svg`] || ''
 }
 
 const structureItems = computed(() => [
@@ -37,7 +41,6 @@ const structureItems = computed(() => [
 <template>
   <main class="min-h-screen bg-[radial-gradient(circle_at_top,_#edf5ff_0%,_#f8fbff_36%,_#ffffff_100%)] text-slate-900 font-[Inter,Arial,sans-serif]">
 
-    <!-- Hero -->
     <section v-if="landing.content.hero.enabled" class="px-4 pt-6 md:pt-10">
       <div
           class="mx-auto grid max-w-[1200px] gap-8 rounded-[36px] border p-6 shadow-[0_30px_100px_rgba(15,23,42,0.08)] md:p-10"
@@ -75,7 +78,6 @@ const structureItems = computed(() => [
       </div>
     </section>
 
-    <!-- Header -->
     <div v-if="!landing.content.hero.enabled" class="px-4 pt-6 md:pt-10">
       <div class="mx-auto flex max-w-[1200px] items-center justify-between gap-4">
         <div>
@@ -91,7 +93,6 @@ const structureItems = computed(() => [
       </div>
     </div>
 
-    <!-- Goals -->
     <section class="px-4 pt-16">
       <div class="mx-auto max-w-[1120px]">
         <h2 class="text-center text-3xl font-bold tracking-tight text-[#10203d] md:text-4xl">
@@ -113,7 +114,6 @@ const structureItems = computed(() => [
       </div>
     </section>
 
-    <!-- Functionality (Modules) -->
     <section class="px-4 pt-16">
       <div class="mx-auto max-w-[1120px]">
         <div class="mx-auto max-w-[760px] text-center">
@@ -132,24 +132,28 @@ const structureItems = computed(() => [
               class="rounded-[20px] border border-slate-200 bg-white p-4 shadow-[0_8px_30px_rgba(15,23,42,0.05)]"
           >
             <div class="flex items-center justify-between gap-3">
-              <h3 class="text-base font-bold leading-snug text-slate-900">{{ module.title }}</h3>
+              <h3 class="text-base font-bold leading-snug text-slate-900">
+                {{ module.title }}
+              </h3>
+
               <div
                   class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl"
                   :style="{ backgroundColor: `${primaryColor}18` }"
               >
-                <!-- Primary icon as mask -->
                 <div
                     v-if="resolveIcon(module.primary_icon)"
-                    class="icon-mask h-5 w-5"
-                    :style="{
-                        backgroundColor: primaryColor,
-                        maskImage: `url(${resolveIcon(module.primary_icon)})`,
-                        WebkitMaskImage: `url(${resolveIcon(module.primary_icon)})`
-                    }"
+                    class=" "
+                    :style="{ color: primaryColor }"
+                    v-html="resolveIcon(module.primary_icon)"
                 ></div>
-                <div v-else class="h-4 w-4 rounded-md" :style="{ backgroundColor: `${primaryColor}55` }"></div>
+
+                <div
+                    v-else
+                    class="rounded-md"
+                    :style="{ backgroundColor: `${primaryColor}55` }"
+                ></div>
               </div>
-            </div>
+              </div>
 
             <div class="my-3 h-px bg-slate-100"></div>
             <p class="text-sm leading-relaxed text-[#536277]">{{ module.content }}</p>
@@ -157,18 +161,14 @@ const structureItems = computed(() => [
 
             <div class="flex items-center gap-2 text-sm leading-relaxed text-[#536277]">
               <div
-                  class="flex h-5 w-5 shrink-0 items-center justify-center rounded-full"
+                  class="flex h-7 w-7 shrink-0 items-center justify-center rounded-full"
                   :style="{ backgroundColor: `${primaryColor}12` }"
               >
-                <!-- Secondary icon as mask -->
                 <div
                     v-if="resolveIcon(module.secondary_icon)"
-                    class="icon-mask h-3 w-3"
-                    :style="{
-                        backgroundColor: primaryColor,
-                        maskImage: `url(${resolveIcon(module.secondary_icon)})`,
-                        WebkitMaskImage: `url(${resolveIcon(module.secondary_icon)})`
-                    }"
+                    class=" "
+                    :style="{ color: primaryColor }"
+                    v-html="resolveIcon(module.secondary_icon)"
                 ></div>
               </div>
               <span>{{ module.secondary_text }}</span>
@@ -178,7 +178,6 @@ const structureItems = computed(() => [
       </div>
     </section>
 
-    <!-- Structure -->
     <section class="px-4 pt-16">
       <div class="mx-auto max-w-[1120px]">
         <h2 class="text-center text-3xl font-bold tracking-tight text-[#10203d] md:text-4xl">
@@ -194,7 +193,7 @@ const structureItems = computed(() => [
                 class="inline-flex rounded-full px-2.5 py-1 text-[11px] font-bold uppercase tracking-[0.08em]"
                 :style="{ color: primaryColor, backgroundColor: `${primaryColor}12` }"
             >
-              Экран
+              Модуль
             </div>
             <h3 class="mt-3 text-base font-bold leading-snug text-[#10203d]">{{ item.title }}</h3>
             <p class="mt-2.5 text-sm leading-relaxed text-[#536277]">{{ item.description }}</p>
@@ -203,7 +202,6 @@ const structureItems = computed(() => [
       </div>
     </section>
 
-    <!-- Advantages -->
     <section class="px-4 pt-16 pb-16">
       <div class="mx-auto max-w-[1120px]">
         <h2 class="text-center text-3xl font-bold tracking-tight text-[#10203d] md:text-4xl">
@@ -227,15 +225,21 @@ const structureItems = computed(() => [
 
   </main>
 </template>
-
 <style scoped>
-.icon-mask {
-  background-color: currentColor;
-  mask-size: contain;
-  mask-repeat: no-repeat;
-  mask-position: center;
-  -webkit-mask-size: contain;
-  -webkit-mask-repeat: no-repeat;
-  -webkit-mask-position: center;
+/* Форсируем цвет для всех элементов внутри вставленного SVG */
+.icon-container :deep(svg) {
+  @apply h-full w-full block;
+}
+
+.icon-container :deep(path),
+.icon-container :deep(circle),
+.icon-container :deep(rect) {
+  fill: currentColor !important; /* Берет цвет из :style="{ color: primaryColor }" */
+  stroke: currentColor !important; /* Если иконка контурная */
+  width: 100% !important;
+  height: 100% !important;
+
+  max-width: none;
+  max-height: none;
 }
 </style>

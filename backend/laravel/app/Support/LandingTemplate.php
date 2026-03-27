@@ -15,18 +15,18 @@ final class LandingTemplate
     public static function iconOptions(): array
     {
         return [
-            'auth-icon' => 'Авторизация',
-            'news-icon' => 'Новости',
-            'notification-icon' => 'Уведомления',
-            'on-boarding-icon' => 'Онбординг',
-            'question-icon' => 'Вопросы',
-            'shop-icon' => 'Магазин',
-            'second-auth-icon' => 'Авторизация 2',
-            'second-news-icon' => 'Новости 2',
-            'second-notification-icon' => 'Уведомления 2',
-            'second-on-boarding-icon' => 'Онбординг 2',
-            'second-question-icon' => 'Вопросы 2',
-            'second-shop-icon' => 'Магазин 2',
+            'auth-icon-mask' => 'Авторизация',
+            'news-icon-mask' => 'Новости',
+            'notification-icon-mask' => 'Уведомления',
+            'on-boarding-icon-mask' => 'Онбординг',
+            'question-icon-mask' => 'Вопросы',
+            'shop-icon-mask' => 'Магазин',
+            'second-auth-icon-mask' => 'Авторизация 2',
+            'second-news-icon-mask' => 'Новости 2',
+            'second-notification-icon-mask' => 'Уведомления 2',
+            'second-on-boarding-icon-mask' => 'Онбординг 2',
+            'second-question-icon-mask' => 'Вопросы 2',
+            'second-shop-icon-mask' => 'Магазин 2',
         ];
     }
 
@@ -68,23 +68,23 @@ final class LandingTemplate
                     [
                         'title' => 'Новости компании',
                         'content' => 'Публикуйте важные обновления и централизуйте коммуникацию.',
-                        'primary_icon' => 'news-icon',
+                        'primary_icon' => 'news-icon-mask',
                         'secondary_text' => 'Push-уведомления и лента новостей',
-                        'secondary_icon' => 'second-news-icon',
+                        'secondary_icon' => 'second-news-icon-mask',
                     ],
                     [
                         'title' => 'Онбординг',
                         'content' => 'Ускорьте адаптацию сотрудников и стандартизируйте обучение.',
-                        'primary_icon' => 'on-boarding-icon',
+                        'primary_icon' => 'on-boarding-icon-mask',
                         'secondary_text' => 'Чек-листы, материалы и инструкции',
-                        'secondary_icon' => 'second-on-boarding-icon',
+                        'secondary_icon' => 'second-on-boarding-icon-mask',
                     ],
                     [
                         'title' => 'Сервисы для сотрудников',
                         'content' => 'Соберите заявки, справки и обращения в одном месте.',
-                        'primary_icon' => 'shop-icon',
+                        'primary_icon' => 'shop-icon-mask',
                         'secondary_text' => 'Быстрый доступ к внутренним сервисам',
-                        'secondary_icon' => 'second-shop-icon',
+                        'secondary_icon' => 'second-shop-icon-mask',
                     ],
                 ],
                 'structure' => [
