@@ -6,6 +6,7 @@ namespace App\MoonShine\Resources\Landing\Pages;
 
 use App\MoonShine\Resources\Landing\LandingResource;
 use App\Support\LandingTemplate;
+use Illuminate\Support\Facades\File;
 use MoonShine\Laravel\Fields\Slug;
 use MoonShine\Laravel\Pages\Crud\FormPage;
 use MoonShine\UI\Components\Collapse;
@@ -62,8 +63,7 @@ class LandingFormPage extends FormPage
                         Text::make('Надзаголовок', 'content->hero->eyebrow')
                             ->placeholder('Корпоративное приложение'),
 
-                        Text::make('Заголовок', 'content->hero->title')
-                            ->required()
+                        Text::make('Заголовок', 'hero_title')
                             ->placeholder('Единое цифровое пространство для вашей компании'),
 
                         Textarea::make('Подзаголовок', 'content->hero->subtitle')
@@ -157,7 +157,7 @@ class LandingFormPage extends FormPage
 
                 Column::make([
                     Box::make('Предпросмотр лендинга', [
-                        FlexibleRender::make(<<<'HTML'
+                        FlexibleRender::make(str_replace('__LANDING_ICON_MAP__', $this->previewIconsJson(), <<<'HTML'
 <div id="landing-preview-root" style="position: sticky; top: 16px;"></div>
 <script>
 (() => {
@@ -228,6 +228,7 @@ class LandingFormPage extends FormPage
         },
     };
 
+   const iconMap = __LANDING_ICON_MAP__;
     const objectUrls = new Map();
 
     const escapeHtml = (value) => String(value ?? '')
@@ -236,6 +237,31 @@ class LandingFormPage extends FormPage
         .replaceAll('>', '&gt;')
         .replaceAll('"', '&quot;')
         .replaceAll("'", '&#039;');
+
+    const resolveIconMarkup = (name) => {
+        if (!name) {
+            return '';
+        }
+
+        const normalized = name.endsWith('-mask') ? name : `${name}-mask`;
+        const icon = iconMap[normalized] || iconMap[name] || '';
+
+        if (!icon) {
+            return '';
+        }
+
+        return icon.replace('<svg ', '<svg style="width:100%;height:100%;display:block;" ');
+    };
+
+    const renderIconMarkup = (name, size, color) => {
+        const icon = resolveIconMarkup(name);
+
+        if (!icon) {
+            return '';
+        }
+
+        return `<div style="width:${size}px;height:${size}px;color:${escapeHtml(color)};display:flex;align-items:center;justify-content:center;">${icon}</div>`;
+    };
 
     const normalizeAsset = (value) => {
         if (!value) {
@@ -322,6 +348,24 @@ class LandingFormPage extends FormPage
         return value;
     };
 
+    const normalizeSelectValue = (value) => {
+        if (Array.isArray(value)) {
+            return value.map((item) => normalizeSelectValue(item));
+        }
+
+        if (value && typeof value === 'object') {
+            const keys = Object.keys(value);
+
+            if ('value' in value && keys.every((key) => ['value', 'label'].includes(key))) {
+                return value.value;
+            }
+
+            return Object.fromEntries(keys.map((key) => [key, normalizeSelectValue(value[key])]));
+        }
+
+        return value;
+    };
+
     const mergeDeep = (base, source) => {
         if (Array.isArray(base)) {
             return Array.isArray(source) && source.length ? source : base;
@@ -362,7 +406,7 @@ class LandingFormPage extends FormPage
         setNestedValue(state, parsePath(key), value);
     });
 
-         const merged = mergeDeep(defaults, normalizeArrays(state));
+         const merged = mergeDeep(defaults, normalizeSelectValue(normalizeArrays(state)));
 
 
     if (merged.primary_color !== undefined) {
@@ -396,6 +440,7 @@ class LandingFormPage extends FormPage
         merged.content.hero.image = merged.hero_image;
         delete merged.hero_image;
     }
+
 
     merged.content.hero.enabled = !!Number(merged.content.hero.enabled ?? 0) || merged.content.hero.enabled === true;
     return merged;
@@ -445,7 +490,8 @@ class LandingFormPage extends FormPage
         const modules = Array.isArray(data.content?.modules) ? data.content.modules : [];
         const structure = data.content?.structure || {};
         const advantages = data.content?.advantages || {};
-
+        const heroTitle = data.hero_title || data.content?.hero?.title || defaults.content.hero.title;
+        console.log(hero)
         previewRoot.innerHTML = `
             <div style="border:1px solid #dbe4f0;border-radius:28px;padding:18px;background:linear-gradient(180deg, #ffffff 0%, #f6f9fc 100%);box-shadow:0 24px 80px rgba(15, 23, 42, 0.08);font-family:Inter, Arial, sans-serif;color:#11203a;">
                 <div style="display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:20px;">
@@ -463,7 +509,7 @@ class LandingFormPage extends FormPage
                 <section style="padding:22px;border-radius:24px;background:${escapeHtml(primaryColor)}12;border:1px solid ${escapeHtml(primaryColor)}33;display:grid;grid-template-columns:minmax(0,1.1fr) minmax(120px,0.9fr);gap:18px;align-items:center;">
                     <div>
                         <div style="font-size:12px;text-transform:uppercase;letter-spacing:0.08em;color:${escapeHtml(primaryColor)};font-weight:700;">${escapeHtml(hero.eyebrow || '')}</div>
-                        <h2 style="margin:10px 0 0;font-size:28px;line-height:1.12;font-weight:800;color:#10203d;">${escapeHtml(hero.title || '')}</h2>
+                        <h2 style="margin:10px 0 0;font-size:28px;line-height:1.12;font-weight:800;color:#10203d;">${escapeHtml(heroTitle || '')}</h2>
                         <p style="margin:12px 0 0;font-size:14px;line-height:1.6;color:#536277;">${escapeHtml(hero.subtitle || '')}</p>
                     </div>
                     <div style="display:flex;justify-content:center;align-items:center;min-height:160px;">
@@ -479,7 +525,7 @@ class LandingFormPage extends FormPage
                 <section style="margin-top:22px;">
                     <div style="font-size:22px;font-weight:700;text-align:center;">${escapeHtml(functionality.section_title || '')}</div>
                     <p style="margin:10px auto 0;max-width:540px;text-align:center;font-size:14px;line-height:1.6;color:#536277;">${escapeHtml(functionality.description || '')}</p>
-                    <div style="margin-top:16px;">${renderListCards(modules, (item) => `<div style="padding:16px;border-radius:20px;background:#fff;border:1px solid #e5e7eb;box-shadow:0 8px 30px rgba(15, 23, 42, 0.05);"><div style="display:flex;align-items:center;justify-content:space-between;gap:12px;"><div style="font-size:16px;font-weight:700;line-height:1.3;">${escapeHtml(item.title || '')}</div><div style="width:36px;height:36px;border-radius:12px;background:${escapeHtml(primaryColor)}18;color:${escapeHtml(primaryColor)};display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;">ICON</div></div><div style="height:1px;background:#edf2f7;margin:12px 0;"></div><div style="font-size:14px;line-height:1.55;color:#536277;">${escapeHtml(item.content || '')}</div><div style="height:1px;background:#edf2f7;margin:12px 0;"></div><div style="font-size:13px;line-height:1.5;color:#536277;display:flex;align-items:center;gap:8px;"><span style="width:20px;height:20px;border-radius:999px;background:${escapeHtml(primaryColor)}12;display:inline-block;"></span>${escapeHtml(item.secondary_text || '')}</div></div>`, 1)}</div>
+                    <div style="margin-top:16px;">${renderListCards(modules, (item) => `<div style="padding:16px;border-radius:20px;background:#fff;border:1px solid #e5e7eb;box-shadow:0 8px 30px rgba(15, 23, 42, 0.05);"><div style="display:flex;align-items:center;justify-content:space-between;gap:12px;"><div style="font-size:16px;font-weight:700;line-height:1.3;">${escapeHtml(item.title || '')}</div><div style="width:36px;height:36px;border-radius:12px;background:${escapeHtml(primaryColor)}18;display:flex;align-items:center;justify-content:center;">${renderIconMarkup(item.primary_icon, primaryColor) || `<div style="width:16px;height:16px;border-radius:6px;background:${escapeHtml(primaryColor)}55;"></div>`}</div></div><div style="height:1px;background:#edf2f7;margin:12px 0;"></div><div style="font-size:14px;line-height:1.55;color:#536277;">${escapeHtml(item.content || '')}</div><div style="height:1px;background:#edf2f7;margin:12px 0;"></div><div style="font-size:13px;line-height:1.5;color:#536277;display:flex;align-items:center;gap:8px;"><span style="width:20px;height:20px;border-radius:999px;background:${escapeHtml(primaryColor)}12;display:flex;align-items:center;justify-content:center;">${renderIconMarkup(item.secondary_icon, primaryColor)}</span>${escapeHtml(item.secondary_text || '')}</div></div>`, 1)}</div>
                 </section>
 
                 <section style="margin-top:22px;">
@@ -525,11 +571,33 @@ class LandingFormPage extends FormPage
     renderPreview();
 })();
 </script>
-HTML),
+HTML)),
                     ]),
                 ])->columnSpan(5),
             ]),
         ];
     }
-}
 
+    private function previewIconsJson(): string
+    {
+        $icons = [];
+        $directory = base_path('../../frontend/vue/src/assets/icons');
+
+        if (! is_dir($directory)) {
+            return '{}';
+        }
+
+        foreach (File::files($directory) as $file) {
+            if ($file->getExtension() !== 'svg') {
+                continue;
+            }
+
+            $icons[$file->getBasename('.svg')] = str_replace('</script>', '<\\/script>', $file->getContents());
+        }
+
+        return (string) json_encode(
+            $icons,
+            JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR
+        );
+    }
+}

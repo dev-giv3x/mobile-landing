@@ -18,6 +18,8 @@ use MoonShine\Contracts\ColorManager\PaletteContract;
 use MoonShine\Laravel\Layouts\AppLayout;
 use MoonShine\MenuManager\MenuGroup;
 use MoonShine\MenuManager\MenuItem;
+use MoonShine\Components\Raw;
+
 
 final class MoonShineLayout extends AppLayout
 {
@@ -33,6 +35,23 @@ final class MoonShineLayout extends AppLayout
             Js::make('https://cdnjs.cloudflare.com/ajax/libs/pusher/8.3.0/pusher.min.js'),
             Js::make('https://cdn.jsdelivr.net/npm/laravel-echo@1.15.3/dist/echo.iife.js'),
             Js::make('/js/manager_notification.js'),
+        ];
+    }
+
+    public function components(): array
+    {
+        return [
+            ...parent::components(),
+
+            Raw::make('
+            <script>
+                window.reverbConfig = {
+                    key: "'.config('broadcasting.connections.reverb.key').'",
+                    wsHost: "'.config('broadcasting.connections.reverb.options.host').'",
+                    wsPort: "'.config('broadcasting.connections.reverb.options.port').'"
+                };
+            </script>
+        ')
         ];
     }
 

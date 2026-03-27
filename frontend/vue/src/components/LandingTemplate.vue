@@ -10,7 +10,7 @@ const primaryColor = computed(() => props.landing.settings.primary_color || '#1D
 
 const iconModules = import.meta.glob('../assets/icons/*.svg', {
   eager: true,
-  query: '?raw', // Важно: Vite подтянет содержимое файла как строку
+  query: '?raw',
   import: 'default',
 }) as Record<string, string>
 
@@ -18,7 +18,6 @@ const resolveIcon = (name?: string | null) => {
   if (!name) return ''
   const normalizedName = name.endsWith('-mask') ? name : `${name}-mask`
 
-  // Ищем в объекте модулей
   return iconModules[`../assets/icons/${normalizedName}.svg`] || ''
 }
 

@@ -18,10 +18,10 @@
         channel.bind('new-lead', function(data) {
             const payload = data.leadData ? data.leadData : data;
 
-            const message = `🚀 Новый лид:<br>
-<b>Имя:</b> ${payload.name}<br>
-<b>Телефон:</b> ${payload.phone}<br>
-<b>Email:</b> ${payload.email}`;
+            const message = `🚀 Новый лид:
+Имя: ${payload.name}
+Телефон: ${payload.phone}
+Email: ${payload.email}`;
 
             const leadsUrl = '/admin/resource/lead-resource/lead-index-page';
 
@@ -37,14 +37,12 @@
                 });
             }
 
-            // Звук уведомления
-            new Audio('/sounds/notification.mp3').play().catch(e => console.log('Нужен клик по странице для звука'));
+            new Audio('/sounds/notification.mp3').play();
 
-            // Обновляем таблицу лидов, если на странице списка
             window.dispatchEvent(new CustomEvent("async-reload"));
         });
 
-        pusher.connection.bind('connected', () => console.log('✅ Connected to Reverb'));
+        pusher.connection.bind('connected');
     };
 
     initPusher();

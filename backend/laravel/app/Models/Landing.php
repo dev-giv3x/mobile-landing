@@ -60,6 +60,18 @@ class Landing extends Model
         $this->content = $content;
     }
 
+    public function getHeroTitleAttribute()
+    {
+        return $this->content['hero']['title'] ?? null;
+    }
+
+    public function setHeroTitleAttribute($value): void
+    {
+        $content = $this->content;
+        $content['hero']['title'] = $value;
+        $this->content = $content;
+    }
+
     protected static function booted(): void
     {
         static::creating(function (self $landing): void {

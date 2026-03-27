@@ -6,6 +6,8 @@ services:
     working_dir: /var/www/backend/laravel
     volumes:
       - ./backend/laravel:/var/www/backend/laravel/
+      - ./frontend/vue:/var/www/frontend/vue/
+      - .:/var/www/html
     environment:
       XDEBUG_MODE: "off"
       PHP_OPCACHE_ENABLE: 1
@@ -43,6 +45,21 @@ services:
     depends_on:
       - db
     networks: [app]
+
+  worker:
+    build:
+      context: .
+      dockerfile: docker/php/Dockerfile
+    working_dir: /var/www/backend/laravel
+    command: php artisan queue:work --tries=3
+    volumes:
+      - .:/var/www/html
+      - ./backend/laravel:/var/www/backend/laravel/
+    depends_on:
+      - db
+      - php
+    networks: [app]
+    restart: always
 
   phpmyadmin:
     image: phpmyadmin
