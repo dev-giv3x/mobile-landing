@@ -225,7 +225,6 @@ const structureItems = computed(() => [
   </main>
 </template>
 <style scoped>
-/* Форсируем цвет для всех элементов внутри вставленного SVG */
 .icon-container :deep(svg) {
   @apply h-full w-full block;
 }
@@ -233,8 +232,8 @@ const structureItems = computed(() => [
 .icon-container :deep(path),
 .icon-container :deep(circle),
 .icon-container :deep(rect) {
-  fill: currentColor !important; /* Берет цвет из :style="{ color: primaryColor }" */
-  stroke: currentColor !important; /* Если иконка контурная */
+  fill: currentColor !important;
+  stroke: currentColor !important;
   width: 100% !important;
   height: 100% !important;
 

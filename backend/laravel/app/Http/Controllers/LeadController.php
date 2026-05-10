@@ -28,7 +28,7 @@ class LeadController extends Controller
                 'email.required' => 'Укажите адрес электронной почты',
                 'email.regex' => 'Указана недействительная почта',
             ]);
-        try {
+
             $lead = Lead::create($data);
 
             broadcast(new \App\Events\NewLeadEvent([
@@ -72,14 +72,5 @@ class LeadController extends Controller
             ]);
 
             return response()->json(['status' => 'success', 'message' => 'Лид сохранен и отправлен'], 201);
-        } catch (\Throwable $e) {
-            Log::error("CRITICAL ERROR: " . $e->getMessage());
-            Log::error($e->getTraceAsString());
-
-            return response()->json([
-                'status' => 'error',
-                'error_debug' => $e->getMessage()
-            ], 500);
         }
-    }
     }
